@@ -5,6 +5,6 @@
 # Installation
 ## macOS
 
-´´´
+``
 $ brew install pyside
-´´´
+``
