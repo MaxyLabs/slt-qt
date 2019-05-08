@@ -33,7 +33,7 @@ $ python ./slt-qt.py
 
 **How to change which parameters are passed to the connect.sh?**
 - Modify this line: self.connectParamList = [4, 2]
-- The default value is [4, 2] which means that it passes the 4th and 2nd column
+- The default value is [4, 2] which means that it passes the 4th and 2nd columns
 
 **How to change the Table Header Names?**
 - Modify this line: self.columnHeaders = ['Application', 'Version', 'ENV', 'Hostname', 'FQDN']
