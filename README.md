@@ -32,11 +32,14 @@ $ python ./slt-qt.py
 - Use the text filed to sort the list to just one item and push the Connect button
 
 **How to change which parameters are passed to the connect.sh?**
-- Modify this line: self.connectParamList = [4, 2]
+- Modify this variable: self.connectParamList
 - The default value is [4, 2] which means that it passes the 4th and 2nd columns
 
 **How to change the Table Header Names?**
-- Modify this line: self.columnHeaders = ['Application', 'Version', 'ENV', 'Hostname', 'FQDN']
+- Modify this variable: self.columnHeaders
 
-**How to change column is connected to colorizing the table records?**
-- Modify this line: self.colorColumn = 2
+**How to change which column is connected to colorizing the table records?**
+- Modify this variable: self.colorColumn
+
+**How to change which text uses which color?**
+- Modify this variable: self.colorCell
