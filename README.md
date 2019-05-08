@@ -26,6 +26,17 @@ $ brew install pyside
 $ python ./slt-qt.py
 ``
 
+# How-To
 **How to issue the connect.sh for a specific row?**
 - Double click on a row
 - Use the text filed to sort the list to just one item and push the Connect button
+
+**How to change which parameters are passed to the connect.sh?**
+- Modify this line: self.connectParamList = [4, 2]
+- The default value is [4, 2] which means that it passes the 4th and 2nd column
+
+**How to change the Table Header Names?**
+- Modify this line: self.columnHeaders = ['Application', 'Version', 'ENV', 'Hostname', 'FQDN']
+
+**How to change column is connected to colorizing the table records?**
+- Modify this line: self.colorColumn = 2
