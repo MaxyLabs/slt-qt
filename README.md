@@ -25,3 +25,7 @@ $ brew install pyside
 ``
 $ python ./slt-qt.py
 ``
+
+**How to issue the connect.sh for a specific row?**
+- Double click on a row
+- Use the text filed to sort the list to just one item and push the Connect button
