@@ -1,0 +1,4 @@
+# Comment Line
+Application #1; 1.0;    PROD; hostname; hostname.domain.com
+Application #2; 1.5; PREPROD; hostname; hostname.domain.com
+Application #3; 2.0;     DEV; hostname; hostname.domain.com
