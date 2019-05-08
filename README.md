@@ -3,10 +3,11 @@
 # Simple Login Tool
 
 This application makes it easier to search for a specific hostname in a predefined csv file and open a new terminal window for it.
+It is written in Python using PySide and Qt.
 
 ![Screenshot](/slt-qt-screenshot.png "Screenshot")
 
-# Installation
+# Prerequisites
 ## Linux
 
 ``
@@ -21,4 +22,6 @@ $ brew install pyside
 
 # Usage
 
- ToDo
+``
+$ python ./slt-qt.py
+``
