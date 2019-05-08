@@ -4,6 +4,8 @@
 
 This application makes it easier to search for a specific hostname in a predefined csv file and open a new terminal window for it.
 
+![Screenshot](/slt-qt-screenshot.png "Screenshot")
+
 # Installation
 ## Linux
 
