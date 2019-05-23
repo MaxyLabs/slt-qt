@@ -5,7 +5,7 @@
 This application makes it easier to search for a specific hostname in a predefined csv file and open a new terminal window for it.<br/>
 It is written in Python using PySide and Qt.
 
-![Screenshot](/slt-qt-screenshot.png "Screenshot")
+![Screenshot](/screenshot/slt-qt-v0.1.png "slt-qt v0.1")
 
 # Install Required Dependencies
 ## Linux
