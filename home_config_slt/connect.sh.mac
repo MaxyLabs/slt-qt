@@ -1,0 +1,28 @@
+#!/usr/bin/osascript
+
+on run argv
+    tell application "iTerm"
+        set hostArg to (item 1 of argv)
+        set envArg  to (item 2 of argv)
+        set userArg to (item 3 of argv)
+        set defaultUser to "myusername"
+
+        if (userArg is equal to "") then
+            set userArg to defaultUser
+        end if
+
+        if (envArg is equal to "PROD") then
+            create window with profile "PROD"
+        else if (envArg is equal to "PREPROD") then
+            create window with profile "PREPROD"
+        else if (envArg is equal to "DEV") then
+            create window with profile "DEV"
+        else
+            create window with default profile
+        end if
+
+        tell first session of current tab of current window
+            write text "ssh " & userArg & "@" & hostArg
+        end tell
+    end tell
+end run
