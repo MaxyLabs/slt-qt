@@ -7,7 +7,7 @@ It is written in Python using PySide and Qt.
 
 ![Screenshot](/slt-qt-screenshot.png "Screenshot")
 
-# Prerequisites
+# Install Required Dependencies
 ## Linux
 
 ``
@@ -20,7 +20,14 @@ $ dnf install python3-pyside2
 $ brew install python pyside 
 ``
 
-# Usage
+# Create Applciation Bundle
+## macOS
+
+``
+$ ./create-app-bundle-mac.sh
+``
+
+# Run the App
 
 ``
 $ python ./slt-qt.py
