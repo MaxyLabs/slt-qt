@@ -20,21 +20,21 @@ $ dnf install python3-pyside2
 $ brew install python pyside 
 ``
 
-# Create Application Bundle
-## macOS
-
-``
-$Â ./create-app-bundle-mac.sh
-``
-
-# Download Application Bundles
-- [slt-qt-v0.2-mac.zip](https://github.com/MaxyLabs/slt-qt/raw/master/build/slt-qt-v0.2-mac.zip)
-
 # Run the App
 
 ``
 $ python ./slt-qt.py
 ``
+
+# Create Application Bundle
+## macOS
+
+``
+$ ./create-app-bundle-mac.sh
+``
+
+# Download Application Bundles
+- [slt-qt-v0.2-mac.zip](https://github.com/MaxyLabs/slt-qt/raw/master/build/slt-qt-v0.2-mac.zip)
 
 # How-To
 **How to issue the connect.sh for a specific row?**
