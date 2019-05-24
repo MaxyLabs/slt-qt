@@ -11,7 +11,7 @@ pyinstaller slt-qt.py \
 #---------------------------------
 #-- Copy the Required Dependencies
 #---------------------------------
-DIR_SOURCE="/usr/local/Cellar/pyside/5.12.1/lib/python3.7/site-packages"
+DIR_SOURCE="/usr/local/Cellar/pyside/5.12.3/lib/python3.7/site-packages"
 DIR_TARGET="./dist/slt-qt.app/Contents/MacOS"
 
 LIB_REQ="PySide2
@@ -21,5 +21,5 @@ shiboken2_generator"
 
 for LIB in ${LIB_REQ}
 do
-  cp -r ${DIR_SOURCE}/${LIB} ${DIR_TARGET}
+  cp -r "${DIR_SOURCE}/${LIB}" ${DIR_TARGET}
 done
