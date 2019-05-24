@@ -20,12 +20,15 @@ $ dnf install python3-pyside2
 $ brew install python pyside 
 ``
 
-# Create Applciation Bundle
+# Create Application Bundle
 ## macOS
 
 ``
 $ ./create-app-bundle-mac.sh
 ``
+
+# Download Application Bundles
+- [slt-qt-v0.2-mac.zip](https://github.com/MaxyLabs/slt-qt/blob/master/build/slt-qt-v0.2-mac.zip)
 
 # Run the App
 
