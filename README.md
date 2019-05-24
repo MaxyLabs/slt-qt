@@ -28,7 +28,7 @@ $ ./create-app-bundle-mac.sh
 ``
 
 # Download Application Bundles
-- [slt-qt-v0.2-mac.zip](https://github.com/MaxyLabs/slt-qt/blob/master/build/slt-qt-v0.2-mac.zip)
+- [slt-qt-v0.2-mac.zip](https://github.com/MaxyLabs/slt-qt/raw/master/build/slt-qt-v0.2-mac.zip)
 
 # Run the App
 
