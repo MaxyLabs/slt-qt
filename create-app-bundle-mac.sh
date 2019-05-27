@@ -11,7 +11,7 @@ pyinstaller slt-qt.py \
 #---------------------------------
 #-- Copy the Required Dependencies
 #---------------------------------
-DIR_SOURCE="/usr/local/Cellar/pyside/5.12.3/lib/python3.7/site-packages"
+DIR_SOURCE="$(find /usr/local/Cellar -name site-packages | grep ".*pyside.*python3.7")"
 DIR_TARGET="./dist/slt-qt.app/Contents/MacOS"
 
 LIB_REQ="PySide2
