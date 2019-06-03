@@ -5,7 +5,7 @@
 This application makes it easier to search for a specific hostname in a predefined csv file and open a new terminal window for it.<br/>
 It is written in Python using PySide and Qt.
 
-![Screenshot](/screenshot/slt-qt-v0.1.png "slt-qt v0.1")
+![Screenshot](/screenshot/slt-qt-v0.2.1-mac.png "slt-qt v0.2.1")
 
 # Install Required Dependencies
 ## Linux
@@ -30,7 +30,7 @@ $ python ./slt-qt.py
 ## macOS
 
 ``
-$ ./create-app-bundle-mac.sh
+$Â ./create-app-bundle-mac.sh
 ``
 
 # Download Application Bundles
@@ -41,15 +41,11 @@ $ ./create-app-bundle-mac.sh
 - Double click on a row
 - Use the text filed to sort the list to just one item and push the Connect button
 
-**How to change which parameters are passed to the connect.sh?**
-- Modify this variable: self.connectParamList
-- The default value is [4, 2] which means that it passes the 4th and 2nd columns
-
-**How to change the Table Header Names?**
-- Modify this variable: self.columnHeaders
-
-**How to change which column is connected to colorizing the table records?**
-- Modify this variable: self.colorColumn
-
-**How to change which text uses which color?**
-- Modify this variable: self.colorCell
+**You can change the following parameters in $HOME/.config/slt/config.json file**
+- Enable / Disable bottom pop-up messages
+- Color codes in RGB
+- Button labels
+- Table Header Names
+- Which table column used for colorizing
+- Which table column used for connection parameters
+- Which Table Cell data used for Record Colorizing
