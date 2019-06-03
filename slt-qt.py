@@ -3,11 +3,11 @@
 #------------------------------------------
 #-- Simple Login Tool using Qt
 #-- Created by: Gergely Macoun
-#-- Version   : 0.2
+#-- Version   : 0.2.1
 #-- License   : MIT
 #------------------------------------------
 
-__version__ = '0.2'
+__version__ = '0.2.1'
 
 from PySide2.QtGui     import QColor
 from PySide2.QtWidgets import (
@@ -36,22 +36,15 @@ class App(QWidget):
     def __init__(self):
         super(App, self).__init__()
 
-        #-- Window
-        self.title  = 'SLT - Simple Login Tool' #+ __version__
-        self.left   =  10
-        self.top    =  10
-        self.width  = 640
-        self.height = 480
-
         #-- Home Directory
         self.homeDir = expanduser("~")
 
         #-- Files
         self.configFile  = self.homeDir + '/.config/slt/config.json'
         self.connectFile = self.homeDir + '/.config/slt/connect.sh'
-        self.hostsFile   = self.homeDir + '/.config/slt/hosts.csv'
+        self.tableFile   = self.homeDir + '/.config/slt/table.csv'
 
-        self.delimiterHostsFile = ';'
+        self.delimitertableFile = ';'
 
         #-- Data of Config File (with Default Values)
         self.dataConfigFile = {
@@ -59,6 +52,13 @@ class App(QWidget):
                 'FileReadSuccess'   : True,
                 'FileReadFailed'    : True,
                 'ColorRedefinition' : True
+            },
+            'Window' : {
+                'Title'  : 'SLT - Simple Login Tool - ' + __version__,
+                'Left'   : 100,
+                'Top'    : 100,
+                'Width'  : 640,
+                'Height' : 480
             },
             'Button' : {
                 'Connect' : {
@@ -69,6 +69,8 @@ class App(QWidget):
                 }
             },
             'Table' :{
+                'Header' : [
+                ],
                 'Column' : {
                     'Color'   : 1,      #-- Number of column which used for text matching
                     'Connect' : [9, 1]  #-- These are those column numbers which data picked from the selected row and will be used as connection parameters
@@ -80,8 +82,8 @@ class App(QWidget):
             }
         }
 
-        #-- Data of Hosts File
-        self.dataHostsFile = []
+        #-- Data of Table File
+        self.dataTableFile = []
 
         #-- Layout
         self.mainLayout    = None
@@ -239,6 +241,24 @@ class App(QWidget):
             self.messageLabel.setText(message)
 
     #------------------------------------------
+    #-- Check Table Header
+    #------------------------------------------
+    def checkHeaderTable(self, hostsList):
+        #-- Length of the Header defined in the config file
+        lengthHeaderConfigFile = len(self.dataConfigFile['Table']['Header'])
+
+        #-- Length of the First Record
+        if (len(hostsList) > 0):
+            lengthFirstRecord = len(hostsList[0])
+        else:
+            lengthFirstRecord = 0
+
+        #-- Append the Header if the list in config file is too short
+        if (lengthHeaderConfigFile < lengthFirstRecord):
+            for header in range(lengthHeaderConfigFile+1, lengthFirstRecord+1):
+                self.dataConfigFile['Table']['Header'].append(str(header))
+
+    #------------------------------------------
     #-- Create Table
     #------------------------------------------
     def createTable(self, hostsList):
@@ -352,8 +372,8 @@ class App(QWidget):
 
         self.myTable.show()
 
-        #-- Update the dataHostsFile with searchText
-        for record in self.dataHostsFile:
+        #-- Update the dataTableFile with searchText
+        for record in self.dataTableFile:
             found = False
             for cell in record:
                 if (searchText == '' or cell.lower().find(searchText.lower()) != -1):
@@ -478,8 +498,8 @@ class App(QWidget):
 
                 if (strippedLine != ''):
                     if (strippedLine[0] != '#'):
-                        #result.append(list(strippedLine.split(self.delimiterHostsFile)))  #-- List Items are not Stripped
-                        result.append(list(item.strip() for item in strippedLine.split(self.delimiterHostsFile)))  #-- List Items are Stripped
+                        #result.append(list(strippedLine.split(self.delimiterTableFile)))  #-- List Items are not Stripped
+                        result.append(list(item.strip() for item in strippedLine.split(self.delimitertableFile)))  #-- List Items are Stripped
                         #print(strippedLine)  #-- Debug
 
             #-- Debug
@@ -507,20 +527,27 @@ class App(QWidget):
     def initUI(self):
         #-- Read the File
         self.readConfigFile(self.configFile)
-        self.dataHostsFile = self.readCsvFile(self.hostsFile)
+        self.dataTableFile = self.readCsvFile(self.tableFile)
 
         #-- Create GUI Elements
         self.createLayout()
         self.createInputBox()
         self.createConnectButton(self.dataConfigFile['Button']['Connect']['Label'])
-        self.createTable(self.dataHostsFile)
+        self.checkHeaderTable(self.dataTableFile)
+        self.createTable(self.dataTableFile)
         self.createMessageButton(self.dataConfigFile['Button']['Message']['Label'])
         self.createMessageLabel()
         self.updateMessageLabel()
 
         #-- Set the Window
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        #self.setWindowTitle(self.title)
+        self.setWindowTitle(self.dataConfigFile['Window']['Title'])
+        self.setGeometry(
+            self.dataConfigFile['Window']['Left'],
+            self.dataConfigFile['Window']['Top'],
+            self.dataConfigFile['Window']['Width'],
+            self.dataConfigFile['Window']['Height']
+        )
         
         #-- Set the Layout
         self.mainLayout.addWidget(self.inputBox,      0,0,1,1)
