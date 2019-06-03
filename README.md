@@ -34,7 +34,7 @@ $ ./create-app-bundle-mac.sh
 ``
 
 # Download Application Bundles
-- [slt-qt-v0.2-mac.zip](https://github.com/MaxyLabs/slt-qt/raw/master/build/slt-qt-v0.2-mac.zip)
+- [slt-qt-v0.2.1-mac.zip](https://github.com/MaxyLabs/slt-qt/raw/master/build/slt-qt-v0.2.1-mac.zip)
 
 # How-To
 **How to issue the connect.sh for a specific row?**
