@@ -37,7 +37,7 @@
             "Color" : {
                 "PROD"    : "Salmon",
                 "PREPROD" : "LightBlue",
-                "TEST"    : "LightGreen"
+                "DEV"     : "LightGreen"
             }
         }
     }
