@@ -10,13 +10,13 @@ It is written in Python using PySide and Qt.
 # Install Required Dependencies
 **Linux**
 
-``
+```
 #-- PySide2
 $ sudo dnf install python3-pyside2
 
 #-- PyQt5
 $ sudo dnf install python3-qt5
-``
+```
 
 **macOS**
 
