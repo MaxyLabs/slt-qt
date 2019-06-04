@@ -8,13 +8,17 @@ It is written in Python using PySide and Qt.
 ![Screenshot](/screenshot/slt-qt-v0.2.1-mac.png "slt-qt v0.2.1")
 
 # Install Required Dependencies
-## Linux
+**Linux**
 
-``
-$ dnf install python3-pyside2
-``
+```
+#-- PySide2
+$ sudo dnf install python3-pyside2
 
-## macOS
+#-- PyQt5
+$ sudo dnf install python3-qt5
+```
+
+**macOS**
 
 ``
 $ brew install python pyside 
@@ -27,7 +31,7 @@ $ python ./slt-qt.py
 ``
 
 # Create Application Bundle
-## macOS
+**macOS**
 
 ``
 $ ./create-app-bundle-mac.sh
