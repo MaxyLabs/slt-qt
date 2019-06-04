@@ -8,13 +8,13 @@ It is written in Python using PySide and Qt.
 ![Screenshot](/screenshot/slt-qt-v0.2.1-mac.png "slt-qt v0.2.1")
 
 # Install Required Dependencies
-## Linux
+**Linux**
 
 ``
 $ dnf install python3-pyside2
 ``
 
-## macOS
+**macOS**
 
 ``
 $ brew install python pyside 
