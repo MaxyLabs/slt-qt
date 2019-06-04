@@ -9,6 +9,4 @@ if [[ "${ARG_USER}" = ""  ]]; then
   ARG_USER="${DEFAULT_USER}"
 fi
 
-APP="gnome-terminal --profile=${ARG_ENV} --command"
-
-${APP} "ssh ${ARG_USER}@${ARG_HOSTNAME}
+gnome-terminal --profile=${ARG_ENV} -x sh -c "ssh ${ARG_USER}@${ARG_HOSTNAME}"
