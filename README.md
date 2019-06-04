@@ -31,7 +31,7 @@ $ python ./slt-qt.py
 ``
 
 # Create Application Bundle
-## macOS
+**macOS**
 
 ``
 $ ./create-app-bundle-mac.sh
