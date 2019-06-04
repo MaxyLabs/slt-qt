@@ -54,11 +54,13 @@ class App(QWidget):
                 'ColorRedefinition' : True
             },
             'Window' : {
-                'Title'  : 'SLT - Simple Login Tool - ' + __version__,
                 'Left'   : 100,
                 'Top'    : 100,
                 'Width'  : 640,
                 'Height' : 480
+            },
+            'Title' : {
+                'Label' : 'SLT - Simple Login Tool - ' + __version__
             },
             'Button' : {
                 'Connect' : {
@@ -287,15 +289,14 @@ class App(QWidget):
         self.myTable.setEditTriggers(QTableWidget.NoEditTriggers)
 
         #-- Set Table Header Properties
-        for item in self.dataConfigFile['Table']['Header']:
+        for numCell in range(0, len(self.dataConfigFile['Table']['Header'])):
             headerTableWidget.setSectionResizeMode(numCell, QHeaderView.ResizeToContents)
-            numCell += 1
         
         #-- Set the First Column to Resizeable
         #headerTableWidget.setSectionResizeMode(0, QHeaderView.Stretch)
 
         #-- Set the Last Column to Resizeable
-        headerTableWidget.setSectionResizeMode(numCell-1, QHeaderView.Stretch)
+        headerTableWidget.setSectionResizeMode(maxTableColumn-1, QHeaderView.Stretch)
 
         #-- Add Double Clicked Event on Table
         self.myTable.itemDoubleClicked.connect(self.doubleClickedOnCellEvent)
@@ -541,7 +542,7 @@ class App(QWidget):
 
         #-- Set the Window
         #self.setWindowTitle(self.title)
-        self.setWindowTitle(self.dataConfigFile['Window']['Title'])
+        self.setWindowTitle(self.dataConfigFile['Title']['Label'])
         self.setGeometry(
             self.dataConfigFile['Window']['Left'],
             self.dataConfigFile['Window']['Top'],
