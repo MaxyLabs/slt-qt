@@ -3,25 +3,40 @@
 #------------------------------------------
 #-- Simple Login Tool using Qt
 #-- Created by: Gergely Macoun
-#-- Version   : 0.2.1
+#-- Version   : 0.2.2
 #-- License   : MIT
 #------------------------------------------
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
-from PySide2.QtGui     import QColor
-from PySide2.QtWidgets import (
-    QApplication,
-    QWidget,
-    QGridLayout, 
-    QLabel,
-    QLineEdit, 
-    QPushButton, 
-    QTableWidget,
-    QTableWidgetItem,
-    QHeaderView,
-    QTextEdit
-)
+try:
+    from PySide2.QtGui     import QColor
+    from PySide2.QtWidgets import (
+        QApplication,
+        QWidget,
+        QGridLayout, 
+        QLabel,
+        QLineEdit, 
+        QPushButton, 
+        QTableWidget,
+        QTableWidgetItem,
+        QHeaderView,
+        QTextEdit
+    )
+except ImportError:
+    from PyQt5.QtGui     import QColor
+    from PyQt5.QtWidgets import (
+        QApplication,
+        QWidget,
+        QGridLayout, 
+        QLabel,
+        QLineEdit, 
+        QPushButton, 
+        QTableWidget,
+        QTableWidgetItem,
+        QHeaderView,
+        QTextEdit
+    )
 
 import json
 import os
