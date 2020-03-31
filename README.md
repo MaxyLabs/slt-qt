@@ -8,7 +8,8 @@ It is written in Python using PySide and Qt.
 ![Screenshot](/screenshot/slt-qt-v0.2.1-mac.png "slt-qt v0.2.1")
 
 # Install Required Dependencies
-**Linux**
+
+## Linux
 
 ```
 #-- PySide2
@@ -18,24 +19,39 @@ $ sudo dnf install python3-pyside2
 $ sudo dnf install python3-qt5
 ```
 
-**macOS**
+## macOS
 
-``
-$ brew install python pyside 
-``
+Install [brew](https://brew.sh/)
+
+```
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
+
+Install packages via brew
+
+```
+$ brew install python
+```
+
+Install python packages via pip
+
+```
+$ pip3 install PyInstaller shiboken2 PySide2
+```
 
 # Run the App
 
-``
+```
 $ python ./slt-qt.py
-``
+```
 
 # Create Application Bundle
-**macOS**
 
-``
+## macOS
+
+```
 $ ./create-app-bundle-mac.sh
-``
+```
 
 # Download Application Bundles
 - [slt-qt-v0.2.1-mac.zip](https://github.com/MaxyLabs/slt-qt/raw/master/build/slt-qt-v0.2.1-mac.zip)

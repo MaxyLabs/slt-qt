@@ -1,42 +1,10 @@
 #!/usr/bin/env python3
 
-#------------------------------------------
-#-- Simple Login Tool using Qt
-#-- Created by: Gergely Macoun
-#-- Version   : 0.2.2
-#-- License   : MIT
-#------------------------------------------
-
-__version__ = '0.2.2'
-
-try:
-    from PySide2.QtGui     import QColor
-    from PySide2.QtWidgets import (
-        QApplication,
-        QWidget,
-        QGridLayout, 
-        QLabel,
-        QLineEdit, 
-        QPushButton, 
-        QTableWidget,
-        QTableWidgetItem,
-        QHeaderView,
-        QTextEdit
-    )
-except ImportError:
-    from PyQt5.QtGui     import QColor
-    from PyQt5.QtWidgets import (
-        QApplication,
-        QWidget,
-        QGridLayout, 
-        QLabel,
-        QLineEdit, 
-        QPushButton, 
-        QTableWidget,
-        QTableWidgetItem,
-        QHeaderView,
-        QTextEdit
-    )
+# ------------------------------------------
+# -- Simple Login Tool using Qt
+# -- Created by: Gergely Macoun
+# -- License   : MIT
+# ------------------------------------------
 
 import json
 import os
@@ -44,371 +12,508 @@ import sys
 
 from os.path import expanduser
 
-class App(QWidget):
-    #------------------------------------------
-    #-- Initialize the Class
-    #------------------------------------------
+try:
+    from PySide2.QtGui import QColor, QIcon
+    from PySide2.QtWidgets import (
+        QApplication,
+        QFrame,
+        QGridLayout,
+        QHeaderView,
+        QLabel,
+        QLineEdit,
+        QMainWindow,
+        QPushButton,
+        QStatusBar,
+        QTableWidget,
+        QTableWidgetItem,
+        QTextEdit,
+        QWidget,
+    )
+except ImportError:
+    from PyQt5.QtGui import QColor, QIcon
+    from PyQt5.QtWidgets import (
+        QApplication,
+        QFrame,
+        QHeaderView,
+        QGridLayout,
+        QLabel,
+        QLineEdit,
+        QMainWindow,
+        QPushButton,
+        QStatusBar,
+        QTableWidget,
+        QTableWidgetItem,
+        QTextEdit,
+        QWidget,
+    )
+
+__version__ = '0.2.4'
+
+
+class VLine(QFrame):
+    # -- A simple VLine, like the one you get from designer
+    def __init__(self):
+        super(VLine, self).__init__()
+        self.setFrameShape(self.VLine)
+
+
+class App(QMainWindow):
+    # ------------------------------------------
+    # -- Initialize the Class
+    # ------------------------------------------
     def __init__(self):
         super(App, self).__init__()
 
-        #-- Home Directory
-        self.homeDir = expanduser("~")
+        # -- Home Directory
+        self.home_path = expanduser("~")
 
-        #-- Files
-        self.configFile  = self.homeDir + '/.config/slt/config.json'
-        self.connectFile = self.homeDir + '/.config/slt/connect.sh'
-        self.tableFile   = self.homeDir + '/.config/slt/table.csv'
+        # -- Base Path
+        # self.app_path = os.path.abspath(__file__)
+        self.app_path = sys.argv[0]
+        self.base_path_split = self.app_path.split('/')
+        self.base_path = str('/').join(self.base_path_split[0:-1])
 
-        self.delimitertableFile = ';'
+        # -- Files under config
+        self.config_file = self.base_path + '/config/config.json'
+        self.connect_file = self.base_path + '/config/connect.sh'
+        self.table_file = self.base_path + '/config/table.csv'
 
-        #-- Data of Config File (with Default Values)
-        self.dataConfigFile = {
+        self.delimiter_table_row = ';'
+
+        # -- Data of Config File (with Default Values)
+        self.config_data_file = {
             'Message': {
-                'FileReadSuccess'   : True,
-                'FileReadFailed'    : True,
-                'ColorRedefinition' : True
+                'FileReadSuccess': True,
+                'FileReadFailed': True,
+                'ColorRedefinition': True
             },
-            'Window' : {
-                'Left'   : 100,
-                'Top'    : 100,
-                'Width'  : 640,
-                'Height' : 480
+            'Window': {
+                'Left': 100,
+                'Top': 100,
+                'Width': 640,
+                'Height': 480
             },
-            'Title' : {
-                'Label' : 'SLT - Simple Login Tool - ' + __version__
+            'Margin': {
+                'Left': 11,
+                'Top': 11,
+                'Right': 11,
+                'Bottom': 11
             },
-            'Button' : {
-                'Connect' : {
-                    'Label' : 'Connect'
+            'Title': {
+                'Label': 'SLT - Simple Login Tool - ' + __version__
+            },
+            'Button': {
+                'Connect': {
+                    'Label': 'Connect'
                 },
-                'Message' : {
-                    'Label' : 'X'
+                'Message': {
+                    'Label': 'X'
                 }
             },
-            'Table' :{
-                'Header' : [
+            'Table': {
+                'Header': [
                 ],
-                'Column' : {
-                    'Color'   : 1,      #-- Number of column which used for text matching
-                    'Connect' : [9, 1]  #-- These are those column numbers which data picked from the selected row and will be used as connection parameters
+                'Column': {
+                    'Color': 1,        # -- Number of column which used for text matching
+                    'Connect': [9, 1]  # -- These are those column numbers which data picked from the selected row and will be used as connection parameters
                 },
-                'Cell' : {
-                    'Color' : {
+                'Cell': {
+                    'Color': {
                     }
                 }
             }
         }
 
-        #-- Data of Table File
-        self.dataTableFile = []
+        # -- Data of Table File
+        self.table_data_file = []
 
-        #-- Layout
-        self.mainLayout    = None
+        # -- Dictionary of Colors with QColor Elements
+        self.color_data = {}
 
-        #-- Input Box
-        self.inputBox      = None
+        # -- Central Widget
+        self.central_widget = None
 
-        #-- Connect Button
-        self.connectButton = None
+        # -- Main Layout
+        self.main_layout = None
 
-        #-- Message Button
-        self.messageButton = None
+        # -- Input Box
+        self.input_box = None
 
-        #-- Message Label
-        self.messageLabel  = None
-        self.messageList   = []
+        # -- Connect Button
+        self.connect_button = None
 
-        #-- My Table
-        self.myTable       = None
+        # -- Message Button
+        self.message_button = None
 
-        #-- Color Dictionary with QColor Elements
-        self.colorDict = {}
+        # -- Message Label
+        self.message_label = None
+        self.message_label_count = None
 
-        #-- Messages
-        self.messages = {}
-        self.messages['FileReadSuccess']   = 'INFO: File is opened for read: '
-        self.messages['FileReadFailed']    = 'ERROR: File could not be opened for read: '
-        self.messages['ColorRedefinition'] = 'WARN: Color Redefinition: '
-        
-        #-- Initialize the UI
+        # -- Message List
+        self.message_list = []
+
+        # -- Main Table
+        self.main_table = None
+
+        # -- Status Bar
+        self.status_bar = None
+
+        # -- Messages
+        self.messages = {
+            'FileReadSuccess': 'INFO: File is opened for read: ',
+            'FileReadFailed': 'ERROR: File could not be opened for read: ',
+            'ColorRedefinition': 'WARN: Color Redefinition: '
+        }
+
+        # -- Initialize the UI
         self.initUI()
 
-    #------------------------------------------
-    #-- Create Layout
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Create Main Window
+    # ------------------------------------------
+    # def createMainWindow(self):
+    #     if (self.main_window is None):
+    #         self.main_window = QMainWindow(self)
+
+    # ------------------------------------------
+    # -- Create Central Widget
+    # ------------------------------------------
+    def createCentralWidget(self):
+        if (self.central_widget is None):
+            self.central_widget = QWidget()
+
+        # -- Set Central Widget for QMainWindow
+        self.setCentralWidget(self.central_widget)
+
+    # ------------------------------------------
+    # -- Create Layout
+    # ------------------------------------------
     def createLayout(self):
-        if (self.mainLayout is None):
-            self.mainLayout = QGridLayout()
+        if (self.main_layout is None):
+            self.main_layout = QGridLayout()
 
-    #------------------------------------------
-    #-- Create Text Box
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Create Input Box
+    # ------------------------------------------
     def createInputBox(self):
-        if (self.inputBox is None):
-            self.inputBox = QLineEdit(self)
+        if (self.input_box is None):
+            self.input_box = QLineEdit()
 
-        #-- Add Search Event if ENTER Pressed
-        #self.inputBox.editingFinished.connect(self.searchEvent)
+        # -- Enable Clear Button
+        self.input_box.setClearButtonEnabled(True)
 
-        #-- Add Search Event if Text Changes
-        self.inputBox.textChanged.connect(self.searchEvent)
+        # -- Create Event if enter pressed
+        # self.input_box.editingFinished.connect(self.eventSearchInTable)
+        self.input_box.editingFinished.connect(self.eventConnectButtonClicked)
 
-    #------------------------------------------
-    #-- Search Event
-    #------------------------------------------
-    def searchEvent(self):
-        #print('Search Event. Look up text is: %s' %(self.inputBox.text()))  #-- Debug
-        self.refreshTable(self.inputBox.text())
+        # -- Create Event if text changed
+        self.input_box.textChanged.connect(self.eventSearchInTable)
 
-    #------------------------------------------
-    #-- Create Connect Button
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Search Event
+    # ------------------------------------------
+    def eventSearchInTable(self):
+        # print('Search Event. Look up text is: %s' %(self.input_box.text()))  # -- Debug
+        self.refreshTable(self.input_box.text().strip())
+
+    # ------------------------------------------
+    # -- Create Connect Button
+    # ------------------------------------------
     def createConnectButton(self, text):
-        if (self.connectButton is None):
-            self.connectButton = QPushButton(text)
+        if (self.connect_button is None):
+            self.connect_button = QPushButton(text)
 
-        #-- Add Clicked Event
-        self.connectButton.clicked.connect(self.connectButtonEvent)
+        # -- Add Clicked Event
+        self.connect_button.clicked.connect(self.eventConnectButtonClicked)
 
-    #------------------------------------------
-    #-- Push Event for Connect Button
-    #------------------------------------------
-    def connectButtonEvent(self):
+    # ------------------------------------------
+    # -- Event for Connect Button Clicked
+    # ------------------------------------------
+    def eventConnectButtonClicked(self):
         connectParameters = ''
         row = 0
 
-        #print('Connect Button Pressed')  #-- Debug
+        # print('Connect Button Pressed')  # -- Debug
 
-        if (self.myTable.rowCount() == 1):
-            for column in self.dataConfigFile['Table']['Column']['Connect']:
-                cellTable = self.myTable.item(row, column)
+        if (self.main_table.rowCount() == 1):
+            for column in self.config_data_file['Table']['Column']['Connect']:
+                cellTable = self.main_table.item(row, column)
                 connectParameters += ' ' + str(cellTable.text())
-            
+
             self.connectExecute(connectParameters)
-        #else:
-            #print('More than one item in table, therefore cannot decide which one to choose')  #-- Debug
+        # else:
+            # print('More than one item in table, therefore cannot decide which one to choose')  # -- Debug
 
-    #------------------------------------------
-    #-- Create Message Button
-    #------------------------------------------
-    def createMessageButton(self, text):
-        if (self.messageButton is None):
-            self.messageButton = QPushButton(text)
+    # ------------------------------------------
+    # -- Create Status Bar
+    # ------------------------------------------
+    def createStatusBar(self):
+        if (self.status_bar is None):
+            self.status_bar = QStatusBar()
 
-        #-- Add Clicked Event
-        self.messageButton.clicked.connect(self.messageButtonEvent)
+        self.status_bar.addWidget(self.message_label_count, 0)
+        self.status_bar.addWidget(VLine(), 0)
+        self.status_bar.addWidget(self.message_label, 1)
+        self.status_bar.addWidget(self.message_button, 0)
 
-    #------------------------------------------
-    #-- Push Event for Message Button
-    #------------------------------------------
-    def messageButtonEvent(self):
-        length = len(self.messageList)
+    # ------------------------------------------
+    # -- Update Status Bar
+    # ------------------------------------------
+    def updateStatusBar(self):
+        if (self.status_bar is not None):
+            # -- Hide the Status Bar if the Message List is empty
+            if (len(self.message_list) > 0):
+                self.status_bar.show()
+            else:
+                self.status_bar.hide()
+
+    # ------------------------------------------
+    # -- Get Latest Message
+    # ------------------------------------------
+    def getLatestMessage(self):
+        result = None
+        length = len(self.message_list)
 
         if (length > 0):
-            del self.messageList[length-1]
-            self.updateMessageLabel()
+            result = self.message_list[length - 1]
 
-        if (length - 1 == 0):
-            self.hideMessageEvent()
+        return result
 
-    #------------------------------------------
-    #-- Hide Message Row Event
-    #------------------------------------------
-    def hideMessageEvent(self):
-        self.messageLabel.hide()
-        self.messageButton.hide()
-
-    #------------------------------------------
-    #-- Show Message Row Event
-    #------------------------------------------
-    def showMessageEvent(self):
-        if (self.messageLabel is not None):
-            self.messageLabel.show()
-
-        if (self.messageButton is not None):
-            self.messageButton.show()
-
-    #------------------------------------------
-    #-- Create Message Label
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Create Message Label
+    # ------------------------------------------
     def createMessageLabel(self):
-        if (self.messageLabel is None):
-            self.messageLabel = QLabel(self)
+        if (self.message_label is None):
+            self.message_label = QLabel(self)
 
-    #------------------------------------------
-    #-- Add a Text to Message Label
-    #------------------------------------------
-    def addMessageLabel(self, message):
-        self.messageList.append(message)
+        # -- Add a Text to Message Label
+        # self.message_label.setText(self.getLatestMessage())
         self.updateMessageLabel()
-        self.showMessageEvent()
 
-    #------------------------------------------
-    #-- Update Message Label with Latest Entry
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Update Message Label with Latest Entry
+    # ------------------------------------------
     def updateMessageLabel(self):
-        length  = len(self.messageList)
+        message = ''
+        length = len(self.message_list)
 
+        if (self.message_label is not None):
+            if (length > 0):
+                message = self.message_list[-1]
+
+            self.message_label.setText(message)
+
+    # ------------------------------------------
+    # -- Create Message Label Count
+    # ------------------------------------------
+    def createMessageLabelCount(self):
+        if (self.message_label_count is None):
+            self.message_label_count = QLabel(self)
+
+        self.updateMessageLabelCount()
+
+    # ------------------------------------------
+    # -- Update Message Label Count
+    # ------------------------------------------
+    def updateMessageLabelCount(self):
+        message = ''
+        length = len(self.message_list)
+
+        if (self.message_label_count is not None):
+            if (length > 0):
+                message = '  ' + str(length)
+
+            self.message_label_count.setText(message)
+
+    # ------------------------------------------
+    # -- Create Message Button
+    # ------------------------------------------
+    def createMessageButton(self, text):
+        if (self.message_button is None):
+            self.message_button = QPushButton(text)
+
+        # -- Add Clicked Event
+        self.message_button.clicked.connect(self.eventMessageButtonClicked)
+
+    # ------------------------------------------
+    # -- Event for Message Button Clicked
+    # ------------------------------------------
+    def eventMessageButtonClicked(self):
+        length = len(self.message_list)
+
+        # -- Remove the latest item in Message List
         if (length > 0):
-            message = '(' + str(length) + ') ' + self.messageList[length-1]
-        else:
-            message = ''
+            del self.message_list[length-1]
 
-        if (self.messageLabel is not None):
-            self.messageLabel.setText(message)
+        # -- Update Message Labels
+        self.updateMessageLabel()
+        self.updateMessageLabelCount()
 
-    #------------------------------------------
-    #-- Check Table Header
-    #------------------------------------------
-    def checkHeaderTable(self, hostsList):
-        #-- Length of the Header defined in the config file
-        lengthHeaderConfigFile = len(self.dataConfigFile['Table']['Header'])
+        # -- Update the Status Bar
+        self.updateStatusBar()
 
-        #-- Length of the First Record
+    # ------------------------------------------
+    # -- Add a New Message to List
+    # ------------------------------------------
+    def addNewMessage(self, message):
+        self.message_list.append(message)
+        self.updateMessageLabel()
+
+        # -- Update Status Bar
+        self.updateStatusBar()
+
+    # ------------------------------------------
+    # -- Check Table Header
+    # ------------------------------------------
+    def checkMainTableHeader(self, hostsList):
+        # -- Length of the Header defined in the config file
+        lengthHeaderconfig_file = len(self.config_data_file['Table']['Header'])
+
+        # -- Length of the First Record
         if (len(hostsList) > 0):
             lengthFirstRecord = len(hostsList[0])
         else:
             lengthFirstRecord = 0
 
-        #-- Append the Header if the list in config file is too short
-        if (lengthHeaderConfigFile < lengthFirstRecord):
-            for header in range(lengthHeaderConfigFile+1, lengthFirstRecord+1):
-                self.dataConfigFile['Table']['Header'].append(str(header))
+        # -- Append the Header if the list in config file is too short
+        if (lengthHeaderconfig_file < lengthFirstRecord):
+            for header in range(lengthHeaderconfig_file+1, lengthFirstRecord+1):
+                self.config_data_file['Table']['Header'].append(str(header))
 
-    #------------------------------------------
-    #-- Create Table
-    #------------------------------------------
-    def createTable(self, hostsList):
-        numCell    = 0
+    # ------------------------------------------
+    # -- Create Table
+    # ------------------------------------------
+    def createMainTable(self, hostsList):
+        numCell = 0
 
-        maxTableRow     = len(hostsList)
-        maxTableColumn  = len(self.dataConfigFile['Table']['Header'])
+        maxTableRow = len(hostsList)
+        maxTableColumn = len(self.config_data_file['Table']['Header'])
 
-        if (self.myTable is None):
-            self.myTable = QTableWidget()
-        
-        #-- Set the Maximum Size of Table
-        self.myTable.setColumnCount(maxTableColumn)
-        self.myTable.setRowCount(maxTableRow)
+        if (self.main_table is None):
+            self.main_table = QTableWidget()
 
-        #-- Create the Horizontal Header of Table
-        headerTableWidget = self.myTable.horizontalHeader()
+        # -- Set the Maximum Size of Table
+        self.main_table.setColumnCount(maxTableColumn)
+        self.main_table.setRowCount(maxTableRow)
 
-        #-- Set the Table Header
-        self.myTable.setHorizontalHeaderLabels(self.dataConfigFile['Table']['Header'])
+        # -- Create the Horizontal Header of Table
+        headerTableWidget = self.main_table.horizontalHeader()
 
-        #-- Hide The Horizontal Table Header
-        #sself.myTable.horizontalHeader().setVisible(False)
+        # -- Set the Table Header
+        self.main_table.setHorizontalHeaderLabels(self.config_data_file['Table']['Header'])
 
-        #-- Set the Cells to Read Only
-        self.myTable.setEditTriggers(QTableWidget.NoEditTriggers)
+        # -- Hide The Horizontal Table Header
+        # self.main_table.horizontalHeader().setVisible(False)
 
-        #-- Set Table Header Properties
-        for numCell in range(0, len(self.dataConfigFile['Table']['Header'])):
+        # -- Set the Cells to Read Only
+        self.main_table.setEditTriggers(QTableWidget.NoEditTriggers)
+
+        # -- Set Table Header Properties
+        for numCell in range(0, len(self.config_data_file['Table']['Header'])):
             headerTableWidget.setSectionResizeMode(numCell, QHeaderView.ResizeToContents)
-        
-        #-- Set the First Column to Resizeable
-        #headerTableWidget.setSectionResizeMode(0, QHeaderView.Stretch)
 
-        #-- Set the Last Column to Resizeable
+        # -- Set the First Column to Resizeable
+        # headerTableWidget.setSectionResizeMode(0, QHeaderView.Stretch)
+
+        # -- Set the Last Column to Resizeable
         headerTableWidget.setSectionResizeMode(maxTableColumn-1, QHeaderView.Stretch)
 
-        #-- Add Double Clicked Event on Table
-        self.myTable.itemDoubleClicked.connect(self.doubleClickedOnCellEvent)
+        # -- Add Double Clicked Event on Table
+        self.main_table.itemDoubleClicked.connect(self.eventMainTableDoubleClickedOnCell)
 
-        #-- Insert Data into Table
-        self.insertDataIntoTable(self.myTable, hostsList)
+        # -- Insert Data into Table
+        self.insertDataIntoTable(self.main_table, hostsList)
 
-    #------------------------------------------
-    #-- Double Clicked on Cell Event
-    #------------------------------------------
-    def doubleClickedOnCellEvent(self):
+    # ------------------------------------------
+    # -- Double Clicked on Cell Event
+    # ------------------------------------------
+    def eventMainTableDoubleClickedOnCell(self):
         connectParameters = ''
-        row = self.myTable.currentRow()
+        row = self.main_table.currentRow()
 
-        #print('Double Clicked on a Table Cell')  #-- Debug
+        # print('Double Clicked on a Table Cell')  # -- Debug
 
-        for column in self.dataConfigFile['Table']['Column']['Connect']:
-            cellTable = self.myTable.item(row, column)
+        for column in self.config_data_file['Table']['Column']['Connect']:
+            cellTable = self.main_table.item(row, column)
             connectParameters += ' ' + str(cellTable.text())
 
         self.connectExecute(connectParameters)
 
-    #------------------------------------------
-    #-- Insert Data into the Table
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Insert Data into the Table
+    # ------------------------------------------
     def insertDataIntoTable(self, inputTable, inputRecords):
-        maxHeaderColumn = len(self.dataConfigFile['Table']['Header'])
-        maxTableColumn  = len(self.dataConfigFile['Table']['Header'])
-        maxTableRow     = len(inputRecords)
-        colorColumn     = self.dataConfigFile['Table']['Column']['Color']
-        numRecord       = 0
-        numCell         = 0
-        
-        #-- Set the Maximum size of Table
+        maxHeaderColumn = len(self.config_data_file['Table']['Header'])
+        maxTableColumn = len(self.config_data_file['Table']['Header'])
+        maxTableRow = len(inputRecords)
+        colorColumn = self.config_data_file['Table']['Column']['Color']
+        numRecord = 0
+        numCell = 0
+
+        # -- Set the Maximum size of Table
         inputTable.setColumnCount(maxTableColumn)
         inputTable.setRowCount(maxTableRow)
 
         for record in inputRecords:
-            #print('Record : %s' %(str(record)))  #-- Debug
+            # print('Record : %s' %(str(record)))  # -- Debug
             for cell in record:
-                #print('Cell : %s' %(cell))  #-- Debug
+                # print('Cell : %s' %(cell))  # -- Debug
                 if (numCell < maxHeaderColumn):
                     inputTable.setItem(numRecord, numCell, QTableWidgetItem(cell))
 
-                    #-- Set the Background Color of Cells
-                    #if (record[colorColumn] in self.colorCell):
-                        #inputTable.item(numRecord, numCell).setBackground(self.colorCell[record[colorColumn]])
-                    if (record[colorColumn] in self.dataConfigFile['Table']['Cell']['Color']):
-                        nameColor = self.dataConfigFile['Table']['Cell']['Color'][record[colorColumn]]
+                    # -- Set the Background Color of Cells
+                    # if (record[colorColumn] in self.colorCell):
+                    #     inputTable.item(numRecord, numCell).setBackground(self.colorCell[record[colorColumn]])
+                    if (record[colorColumn] in self.config_data_file['Table']['Cell']['Color']):
+                        nameColor = self.config_data_file['Table']['Cell']['Color'][record[colorColumn]]
 
-                        #print('Cell: %s, %s, %s' %(record[colorColumn], nameColor, self.colorDict[nameColor]))  #-- Debug
+                        # print('Cell: %s, %s, %s' %(record[colorColumn], nameColor, self.color_data[nameColor]))  # -- Debug
 
-                        inputTable.item(numRecord, numCell).setBackground(self.colorDict[nameColor])
+                        inputTable.item(numRecord, numCell).setBackground(self.color_data[nameColor])
 
                 numCell += 1
-            numCell    = 0
+            numCell = 0
             numRecord += 1
 
         inputTable.move(0, 0)
 
-    #------------------------------------------
-    #-- Refresh Table
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Refresh Table
+    # ------------------------------------------
     def refreshTable(self, searchText):
-        found             = False
+        found = False
         filteredHostsList = []
 
-        #print('Refresh table data.')  #-- Debug
+        # print('Refresh table data.')  # -- Debug
 
-        #-- Clean the Table
-        for row in range (self.myTable.rowCount()-1, -1, -1):
-            #print('Remove row: %s' %(str(row))) #-- Debug
-            self.myTable.removeRow(row)
+        # -- Clean the Table
+        for row in range(self.main_table.rowCount()-1, -1, -1):
+            # print('Remove row: %s' %(str(row))) # -- Debug
+            self.main_table.removeRow(row)
 
-        self.myTable.show()
+        self.main_table.show()
 
-        #-- Update the dataTableFile with searchText
-        for record in self.dataTableFile:
+        # -- Update the table_data_file with searchText
+        for record in self.table_data_file:
             found = False
             for cell in record:
                 if (searchText == '' or cell.lower().find(searchText.lower()) != -1):
-                    #print('Found: %s' %(str(cell)))  #-- Debug
+                    # print('Found: %s' %(str(cell)))  # -- Debug
                     found = True
-            
+
             if (found):
                 filteredHostsList.append(record)
 
-        #-- Recreate Table Data with filtered Values
-        self.insertDataIntoTable(self.myTable, filteredHostsList)
+        # -- Recreate Table Data with filtered Values
+        self.insertDataIntoTable(self.main_table, filteredHostsList)
 
-        #-- Refresh the QTableWidget (required due to screen artifact)
-        self.myTable.hide()
-        self.myTable.show()
+        # -- Refresh the QTableWidget (required due to screen artifact)
+        self.main_table.hide()
+        self.main_table.show()
 
-    #------------------------------------------
-    #-- Read Config File
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Read Config File
+    # ------------------------------------------
     def readConfigFile(self, filename):
         fileHandle = None
         message = ''
@@ -419,76 +524,76 @@ class App(QWidget):
             message = self.messages['FileReadFailed'] + filename
             print(message)
 
-            #-- Message
-            if (self.dataConfigFile['Message']['FileReadFailed'] is True):
-                self.addMessageLabel(message)
+            # -- Message
+            if (self.config_data_file['Message']['FileReadFailed'] is True):
+                self.addNewMessage(message)
         else:
             message = self.messages['FileReadSuccess'] + filename
             print(message)
 
-            #-- Update the Default Data Values with the New Ones
-            #self.dataConfigFile = json.load(fileHandle)
-            self.dataConfigFile.update(json.load(fileHandle))
+            # -- Update the Default Data Values with the New Ones
+            # self.config_data_file = json.load(fileHandle)
+            self.config_data_file.update(json.load(fileHandle))
 
-            #-- Add Colors to the List
-            for key, value in self.dataConfigFile['Color'].items():
-                #-- Check the Length of Value (must have 3 elements [R,G,B])
+            # -- Add Colors to the List
+            for key, value in self.config_data_file['Color'].items():
+                # -- Check the Length of Value (must have 3 elements [R,G,B])
                 if(len(value) == 3):
                     self.addColor(key, value[0], value[1], value[2])
 
-            #-- Message
-            if (self.dataConfigFile['Message']['FileReadSuccess'] is True):
-                self.addMessageLabel(message)
-            
-            #print('JSON: %s' %(self.dataConfigFile))  #-- Debug
+            # -- Message
+            if (self.config_data_file['Message']['FileReadSuccess'] is True):
+                self.addNewMessage(message)
+
+            # print('JSON: %s' %(self.config_data_file))  # -- Debug
         finally:
             if (fileHandle):
                 fileHandle.close()
 
-    #------------------------------------------
-    #-- Add Color to the Dictionary
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Add Color to the Dictionary
+    # ------------------------------------------
     def addColor(self, name, red, green, blue):
-        #print('Add Color: %s [%d,%d,%d]' %(name, red, green, blue))  #-- Debug
+        # print('Add Color: %s [%d,%d,%d]' %(name, red, green, blue))  # -- Debug
 
-        #-- Check Red
+        # -- Check Red
         if(type(red) is int):
             if(red < 0 or red > 255):
                 red = 255
         else:
             red = 255
 
-        #-- Check Green
+        # -- Check Green
         if(type(green) is int):
             if(green < 0 or green > 255):
                 green = 255
         else:
             green = 255
 
-        #-- Check Blue
+        # -- Check Blue
         if(type(blue) is int):
             if(blue < 0 or blue > 255):
                 blue = 255
         else:
             blue = 255
 
-        #print('Add Color: %s [%d,%d,%d]' %(name, red, green, blue))  #-- Debug
+        # print('Add Color: %s [%d,%d,%d]' %(name, red, green, blue))  # -- Debug
 
-        #-- Add the Color to the Dictionary
-        if(name not in self.colorDict):
-            self.colorDict[name] = QColor(red, green, blue)
+        # -- Add the Color to the Dictionary
+        if(name not in self.color_data):
+            self.color_data[name] = QColor(red, green, blue)
         else:
-            #-- Message
-            if (self.dataConfigFile['Message']['ColorRedefinition'] is True):
-                self.addMessageLabel(self.messages['ColorRedefinition'] + name)
+            # -- Message
+            if (self.config_data_file['Message']['ColorRedefinition'] is True):
+                self.addNewMessage(self.messages['ColorRedefinition'] + name)
 
-    #------------------------------------------
-    #-- Read CSV File
-    #------------------------------------------
+    # ------------------------------------------
+    # -- Read CSV File
+    # ------------------------------------------
     def readCsvFile(self, filename):
         fileHandle = None
-        result     = []
-        message    = ''
+        result = []
+        message = ''
 
         try:
             fileHandle = open(filename, 'r')
@@ -496,16 +601,16 @@ class App(QWidget):
             message = self.messages['FileReadFailed'] + filename
             print(message)
 
-            #-- Message
-            if (self.dataConfigFile['Message']['FileReadFailed'] is True):
-                self.addMessageLabel(message)
+            # -- Message
+            if (self.config_data_file['Message']['FileReadFailed'] is True):
+                self.addNewMessage(message)
         else:
             message = self.messages['FileReadSuccess'] + filename
             print(message)
 
-            #-- Message
-            if (self.dataConfigFile['Message']['FileReadSuccess'] is True):
-                self.addMessageLabel(message)
+            # -- Message
+            if (self.config_data_file['Message']['FileReadSuccess'] is True):
+                self.addNewMessage(message)
 
             fileContent = fileHandle.readlines()
 
@@ -514,12 +619,12 @@ class App(QWidget):
 
                 if (strippedLine != ''):
                     if (strippedLine[0] != '#'):
-                        #result.append(list(strippedLine.split(self.delimiterTableFile)))  #-- List Items are not Stripped
-                        result.append(list(item.strip() for item in strippedLine.split(self.delimitertableFile)))  #-- List Items are Stripped
-                        #print(strippedLine)  #-- Debug
+                        # result.append(list(strippedLine.split(self.delimiter_table_row)))  # -- List Items are not Stripped
+                        result.append(list(item.strip() for item in strippedLine.split(self.delimiter_table_row)))  # -- List Items are Stripped
+                        # print(strippedLine)  # -- Debug
 
-            #-- Debug
-            #for line in result:
+            # -- Debug
+            # for line in result:
             #    for column in line:
             #        print('[\'%s\']' %(str(column)), end='')
             #    print('')
@@ -528,68 +633,83 @@ class App(QWidget):
                 fileHandle.close()
 
         return result
-    
-    #------------------------------------------
-    #-- Execute the Connect Command in Shell
-    #------------------------------------------
+
+    # ------------------------------------------
+    # -- Execute the Connect Command in Shell
+    # ------------------------------------------
     def connectExecute(self, parameters):
-        #print('Run: %s %s' %(self.connectFile, parameters))  #-- Debug
+        # print('Run: %s %s' %(self.connect_file, parameters))  # -- Debug
 
-        os.system(self.connectFile + ' ' + parameters)
+        os.system(self.connect_file + ' ' + parameters)
 
-    #------------------------------------------
-    #-- UI Initialization
-    #------------------------------------------
+    # ------------------------------------------
+    # -- UI Initialization
+    # ------------------------------------------
     def initUI(self):
-        #-- Read the File
-        self.readConfigFile(self.configFile)
-        self.dataTableFile = self.readCsvFile(self.tableFile)
+        # -- Read the Config File
+        self.readConfigFile(self.config_file)
 
-        #-- Create GUI Elements
+        # -- Read the Table CSV File
+        self.table_data_file = self.readCsvFile(self.table_file)
+
+        # -- Create GUI Elements
+        self.createCentralWidget()
         self.createLayout()
+
         self.createInputBox()
-        self.createConnectButton(self.dataConfigFile['Button']['Connect']['Label'])
-        self.checkHeaderTable(self.dataTableFile)
-        self.createTable(self.dataTableFile)
-        self.createMessageButton(self.dataConfigFile['Button']['Message']['Label'])
+        self.createConnectButton(self.config_data_file['Button']['Connect']['Label'])
+        self.checkMainTableHeader(self.table_data_file)
+        self.createMainTable(self.table_data_file)
+
         self.createMessageLabel()
-        self.updateMessageLabel()
+        self.createMessageLabelCount()
+        self.createMessageButton(self.config_data_file['Button']['Message']['Label'])
 
-        #-- Set the Window
-        #self.setWindowTitle(self.title)
-        self.setWindowTitle(self.dataConfigFile['Title']['Label'])
+        self.createStatusBar()
+
+        # -- Set Window Title
+        self.setWindowTitle(self.config_data_file['Title']['Label'])
+
+        # -- Set Window Geometry
         self.setGeometry(
-            self.dataConfigFile['Window']['Left'],
-            self.dataConfigFile['Window']['Top'],
-            self.dataConfigFile['Window']['Width'],
-            self.dataConfigFile['Window']['Height']
+            self.config_data_file['Window']['Left'],
+            self.config_data_file['Window']['Top'],
+            self.config_data_file['Window']['Width'],
+            self.config_data_file['Window']['Height']
         )
-        
-        #-- Set the Layout
-        self.mainLayout.addWidget(self.inputBox,      0,0,1,1)
-        self.mainLayout.addWidget(self.connectButton, 0,1,1,1)
-        self.mainLayout.addWidget(self.myTable,       1,0,1,2)
-        self.mainLayout.addWidget(self.messageLabel,  2,0,1,1)
-        self.mainLayout.addWidget(self.messageButton, 2,1,1,1)
 
-        #-- Hide the Bottom Message if the List is Empty
-        if (len(self.messageList) == 0):
-            self.hideMessageEvent()
+        # -- Set Layout Margins
+        self.main_layout.setContentsMargins(
+            self.config_data_file['Margin']['Left'],
+            self.config_data_file['Margin']['Top'],
+            self.config_data_file['Margin']['Right'],
+            self.config_data_file['Margin']['Bottom']
+        )
 
-        self.setLayout(self.mainLayout)
-        self.connectButton.show()
-        self.show()
+        # -- Set Layout
+        self.central_widget.setLayout(self.main_layout)
 
-#------------------------------------------
-#-- Main
-#------------------------------------------
+        # -- Add Widgets to Layout
+        self.main_layout.addWidget(self.input_box, 0, 0, 1, 1)
+        self.main_layout.addWidget(self.connect_button, 0, 1, 1, 1)
+        self.main_layout.addWidget(self.main_table, 1, 0, 1, 2)
+
+        # -- Set Status Bar for QMainWindow
+        self.setStatusBar(self.status_bar)
+
+
+# ------------------------------------------
+# -- Main
+# ------------------------------------------
 def main():
     app = QApplication(sys.argv)
     gui = App()
+    gui.show()
     sys.exit(app.exec_())
 
-#------------------------------------------
-#-- Entrypoint
-#------------------------------------------
+
+# ------------------------------------------
+# -- Entrypoint
+# ------------------------------------------
 if __name__ == '__main__':
     main()
