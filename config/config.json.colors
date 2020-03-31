@@ -10,10 +10,10 @@
         "Height" : 480
     },
     "Margin" : {
-        "Left" : 11,
+        "Left" : 6,
         "Top" : 11,
-        "Right" : 11,
-        "Bottom" : 11
+        "Right" : 0,
+        "Bottom" : 6
     },
     "Color" : {
         "IndianRed"            : [205,  92,  92],
