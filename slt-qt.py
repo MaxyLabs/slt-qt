@@ -666,6 +666,7 @@ class App(QMainWindow):
         self.createMessageButton(self.config_data_file['Button']['Message']['Label'])
 
         self.createStatusBar()
+        self.updateStatusBar()
 
         # -- Set Window Title
         self.setWindowTitle(self.config_data_file['Title']['Label'])
